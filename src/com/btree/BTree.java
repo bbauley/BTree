@@ -40,7 +40,12 @@ public class BTree {
    * If a leaf node is full, it will split and push up the middle
    *  data item to the parent node
    * @param root
+   *  alias root node to traverse through the tree
    * @param value
+   *  value being added to the list
+   * @param merge
+   *  flag to tell us when we need to split and push up
+   *
    * @return The current node that is being looked at
    */
   private Node insert(Node root, int value, boolean merge[]) {
@@ -72,11 +77,10 @@ public class BTree {
     //Current node is a parent with only one value
     //  and two children
     else if(root instanceof OneValue) {
-      //Traverse left or right depending on if nodes
-      //  data is smaller or greater than value
       switch(root.compare(value)) {
         case 1:
           root.setRight(insert(root.Right(), value, merge));
+          //Check if roots right child is trying to merge
           if(merge[0] == true) {
             TwoValues newParent = new TwoValues(root.getData(), root.Right().getData());
             newParent.setLeft(instanceType(root.Left()));
@@ -88,6 +92,7 @@ public class BTree {
           break;
         case -1:
           root.setLeft(insert(root.Left(), value, merge));
+          //Check if roots left child is trying to merge
           if(merge[0] == true) {
             TwoValues newParent = new TwoValues(root.Left().getData(), root.getData());
             newParent.setLeft(instanceType(root.Left().Left()));
@@ -147,10 +152,12 @@ public class BTree {
           break;
       }
     }
-
     return root;
   }
 
+  /**
+   * Wrapper function for the recursive display function
+   */
   public void display() {
     if(root == null) {
       return;
@@ -158,8 +165,11 @@ public class BTree {
     display(this.root);
   }
 
-  //Debugging purposes
-  //Preorder traversal
+  /**
+   * Recursively displays the tree in pre order traversal
+   * This function is more of a debugging tool
+   * @param root
+   */
   private void display(Node root) {
     root.display();
     if(root instanceof OneValue) {
@@ -194,6 +204,53 @@ public class BTree {
       return new TwoValues((TwoValues) copy);
     }
     return null;
+  }
+
+  /**
+   * Searches for a value in the 2-3 tree
+   * @param value
+   * @return success or failure for finding a value in the tree
+   */
+  public boolean search(int value) {
+
+    if(this.root == null) {
+      return false;
+    }
+
+    return search(this.root, value);
+  }
+
+  /**
+   * Recursive function to traverse through the tree and find
+   *  the value passed in as a parameter
+   * @param root
+   * @param value
+   * @return success or failure for finding a value in the tree
+   */
+  private boolean search(Node root, int value) {
+
+    boolean result = root.contain(value);
+    if(root instanceof Leaf) {
+      return result;
+    }
+    else if(root instanceof OneValue) {
+      result |= search(root.Left(), value) || search(root.Right(), value);
+    }
+    else if(root instanceof TwoValues) {
+      result |= search(root.Left(), value) || search(root.Middle(), value) ||
+                search(root.Right(), value);
+    }
+    return result;
+  }
+
+
+  /**
+   * ONLY use is for unit tests to make sure that tree is splitting correctly
+   *  after inserts
+   * @return The root node
+   */
+  public Node getRoot() {
+    return root;
   }
 
 }

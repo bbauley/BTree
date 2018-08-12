@@ -41,6 +41,10 @@ abstract public class Node {
 
 
   //Methods that will be called in all three states
+
+  /** Displays all of the data in the node */
   public void display(){}
+  /** Returns success or failure depending on if value is in node */
+  public boolean contain(int value){return false;}
 
 }

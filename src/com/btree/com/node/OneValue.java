@@ -63,7 +63,11 @@ public class OneValue extends Node{
   }
 
   public int getData() {
-    return data;
+    return this.data;
   }
 
+  @Override
+  public boolean contain(int value) {
+    return (this.data == value) ? true : false;
+  }
 }

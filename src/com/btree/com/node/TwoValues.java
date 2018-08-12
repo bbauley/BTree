@@ -109,4 +109,11 @@ public class TwoValues extends Node{
     return result;
   }
 
+  @Override
+  public boolean contain(int value) {
+    if(data[0] == value || data[1] == value) {
+      return true;
+    }
+    return false;
+  }
 }
